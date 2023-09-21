@@ -1,11 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <iostream>
-#include <cstring>
-#include <cstdio>
-#include <stdio.h>
-
-using namespace std;
 
 class String {
 
@@ -33,12 +28,18 @@ public:
     }
 
     char& operator[](int i) {
-        if (i < 0 || i >= size) exit(1);
+        if (i < 0 || i >= size) {
+            throw std::out_of_range(""); 
+            exit(1);
+        }
         return buffer[i];
     }
 
     const char& operator[](int i) const {
-        if (i < 0 || i >= size) exit(1);
+        if (i < 0 || i >= size) {
+            throw std::out_of_range("");
+            exit(1);
+        }
         return buffer[i];
     }
 
@@ -48,6 +49,7 @@ public:
         strcat(out.buffer, str.buffer);
         return out;
     }
+
     String& operator+=(const String str) {
         size += str.size;
         char* newbuffer = new char[size + 1];
@@ -97,13 +99,13 @@ public:
         return  strcmp(buffer, str.buffer) < 0;
     }
 
-    friend ostream& operator<<(ostream& out, const String& str) {
+    friend std::ostream& operator<<(std::ostream& out, const String& str) {
         printf("%s", str.buffer);
         //printf("%s {%d}", str.buffer, str.size);
         return out;
     }
-
-    friend istream& operator>>(istream& in, String& str) {
+    
+    friend std::istream& operator>>(std::istream& in, String& str) {
         str = "";
         char ch;
         const int step = 16;
@@ -124,12 +126,14 @@ public:
     }
 };
 
-int main()
-{
+using namespace std;
+
+int main() {
     String str1 = "ABCDEF", str2 = "abcd", str3 = "ZXcvB";
     String str4 = str1 + str2;
     cout << str4 << endl;
     str4 += str3;
+    cout << str4 << endl;
 
     for (int i = 0; i < 3; i++) {
         cin >> str4;
