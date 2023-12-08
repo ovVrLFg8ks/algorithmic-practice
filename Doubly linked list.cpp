@@ -31,9 +31,57 @@ private:
         }
     }
 
+    void copy(const DoubleLinkedList& list) {
+        cell* cur = list.front_cell;
+        size = list.size;
+        if (size == 0) return;
+
+        cell* t = new cell;
+        t->value = cur->value;
+        front_cell = t;
+        back_cell = t;
+        cur = cur->next;
+        while (cur != NULL) {
+            cell* t = new cell;
+            t->value = cur->value;
+            t->prev = back_cell;
+            back_cell->next = t;
+            back_cell = t;
+
+            cur = cur->next;
+        }
+    }
+
 public:
     DoubleLinkedList() {    }
 
+    DoubleLinkedList(const DoubleLinkedList& list) {
+        copy(list);
+    }
+    
+    DoubleLinkedList& operator=(const DoubleLinkedList& list) {
+        if (&list != this) {
+            clear();
+            copy(list);
+        }
+        return *this;
+    }
+
+    /*
+    // простой оператор присваивания
+    DoubleLinkedList& operator=(const DoubleLinkedList& copy) {
+        if (&copy != this) {
+            clear();
+            cell* cur = copy.front_cell;
+            while (cur != NULL) {
+                push_back(cur->value);
+                cur = cur->next;
+            }
+        }
+        return *this;
+    }
+    */
+    
     static bool IsEmpty() {
         return size == 0;
     }
@@ -185,6 +233,14 @@ int main() {
     for (int i = 111; i <= 999; i += 111)
         a1.push_back(i);
     a2.push_back(3562356);
+    DoubleLinkedList<int> a3(a1);
+    a1 = a2;
+    a1.print();
+    cout << endl;
+    a2.print();
+    cout << endl;
+    a3.print();
+    /*
     cout << a1.front() << endl;
     cout << a1.back() << endl;
     cout << endl;
@@ -211,4 +267,5 @@ int main() {
 
     a1.erase_element(2);
     a1.print();
+    */
 }
