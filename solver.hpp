@@ -18,10 +18,11 @@ std::map<char, int> pr{
 	{'-', 1},
 	{'*', 2},
 	{'/', 2},
+	//{'~', 3}, 
 	{'#', INT_MIN}
 };
 
-string conversion(string str) {
+std::string conversion(std::string str) {
 	str += '#';
 	stack<string> nums;
 	stack<char> ops;
@@ -53,65 +54,25 @@ string conversion(string str) {
 			if (str[i] != ')')
 				ops.push(str[i]);
 		}
-		else if (str[i] >= '0' && str[i] <= '9') {
+		else if (str[i] >= '0' && str[i] <= '9')
 			num += str[i];
-		}
 		else
 			return "ERR";
 	}
-
 	return out;
 }
 
-/*
-std::string magic1(std::string str) {
-	std::stack<string> nums;
-	std::stack<char> ops;
-	std::string num;
-	std::string out;
-
-	for (int i = 0; i < str.length(); i++) {
-		if (pr.count(str[i])) {
-			if (!num.empty()) {
-				nums.push(num);
-				num.clear();
-			}
-			if (!ops.empty() && pr[str[i]] <= pr[ops.top()]) {
-				out = nums.top() + out + ops.top();
-				nums.pop(); ops.pop();
-				if (!nums.empty()) {
-					out = nums.top() + out;
-					nums.pop();
-				}
-			}
-
-			ops.push(str[i]);
-		}
-		else if (str[i] >= '0' && str[i] <= '9') {
-			num += str[i];
-		}
-		else
-			return "ERR unnown char";
+std::string unary_minus(std::string& str) {
+	if (str[0] == '-')
+		str[0] = '~';
+	for (int i = 1; i < str.length(); i++) {
+		if (str[i] == '-' && str[i - 1] != ')' && pr.count(str[i - 1]))
+			str[i] = '~';
 	}
-	
-	if (!num.empty())
-		nums.push(num);
-
-	while (!nums.empty()) {
-		num = nums.top() + num;
-		nums.pop();
-	}
-	while (!ops.empty()) {
-		num = num + ops.top();
-		ops.pop();
-	}
-	out += num;
-
-	return out;
+	return str;
 }
-*/
 
-bool checkParentheses(std::string str) {
+bool checkParentheses(std::string& str) {
 	int s = 0;
 	for (int i = 0; i < str.length(); i++) {
 		if (str[i] == '(')
@@ -122,22 +83,10 @@ bool checkParentheses(std::string str) {
 				return false;
 		}
 	}
-	return (s == 0) ? true : false;
+	return s == 0;
 }
 
-std::string parser(std::string str) {
-	if (!checkParentheses(str))
-		return "ERR";
-	// remove spaces
-	str.erase(std::remove(str.begin(), str.end(), ' '), str.end());
-
-	std::string out;
-
-
-	return out;
-}
-
-std::string solver(std::string str) {
+std::string solver(std::string& str) {
 	std::stack<double> s;
 	int start = 0;
 	str = str + ' ';
@@ -148,10 +97,7 @@ std::string solver(std::string str) {
 			start = i + 1;
 			if (t == "")
 				continue;
-			/*
-			if (s.size() < 2)
-			goto addnum;
-			*/
+
 			if (t == "+") {
 				double tll = s.top();
 				s.pop();
@@ -192,7 +138,7 @@ std::string solver(std::string str) {
 					s.push(stoll(t));
 				}
 				catch (const std::invalid_argument& e) {
-					return "WHAT";
+					return "INVALID ARGUMENT";
 				}
 			}
 		}
@@ -200,4 +146,21 @@ std::string solver(std::string str) {
 
 	return std::to_string(s.top());
 }
+
+std::string entry(std::string str) {
+	if (!checkParentheses(str))
+		return "ERR";
+
+	// remove spaces
+	str.erase(std::remove(str.begin(), str.end(), ' '), str.end());
+
+	unary_minus(str);
+
+	str = conversion(str);
+	if (str == "ERR")
+		return "ERROR";
+
+	return solver(str);
+}
+
 #undef ll
