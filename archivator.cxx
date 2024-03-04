@@ -14,9 +14,35 @@ struct cell {
 	cell* p1 = NULL;
 	cell* p2 = NULL;
 
-	cell(char c, long val, cell* left, cell* right) : ch(c), value(val), p1(left), p2(right) {}
+	//cell(char c, long val, cell* left, cell* right) : ch(c), value(val), p1(left), p2(right) {}
+	//cell(char c, long val) : ch(c), value(val) {}
+	
 };
+/*
+class Tree {
+private:
+	int size = 0;
+#include <iostream>
+#include <map>
+#include <fstream>
+#include <streambuf>
+#include <vector>
 
+using namespace std;
+
+//map<char, string> codes;
+
+struct cell {
+	char ch;
+	long value;
+	cell* p1 = NULL;
+	cell* p2 = NULL;
+
+	//cell(char c, long val, cell* left, cell* right) : ch(c), value(val), p1(left), p2(right) {}
+	//cell(char c, long val) : ch(c), value(val) {}
+	
+};
+/*
 class Tree {
 private:
 	int size = 0;
@@ -30,11 +56,11 @@ public:
 		
 	}
 };
-
+*/
 int main(int argc, char *argv[]) {
-	//string path = "/storage/emulated/0/Cxx/archivator";
+	string path = "/storage/emulated/0/Cxx/archivator";
 
-	string path = "C:/Users/0001/Desktop/archivator"
+	//string path = "C:/Users/0001/Desktop/archivator"
 	string p = path + ".cxx";
 	string d = path + ".que";
 	string q = path + "0.cxx";
@@ -72,24 +98,32 @@ int main(int argc, char *argv[]) {
 		if (get<0>(counter[i]) == 0)
 			counter.erase(counter.begin()+i, counter.end());
 	}
-	
+	/*
 	for (int i = 0; i < counter.size(); i++) {
 		cout << get<0>(counter[i]) << ' ' 
 			 << get<1>(counter[i]) << ' ' 
 			 << hex << (int)get<1>(counter[i]) << dec << endl; 
-	}
+	}*/
 	
-	Tree tree = new Tree();
 	int size = counter.size();
 
 	vector<cell> cells(size);
+	for (int i = 0; i < size; i++) {
+		cell t;//{get<1>(counter[i]), get<0>(counter[i])};
+		t.ch = get<1>(counter[i]);
+		t.value = get<0>(counter[i]);
+		cells.push_back(t);
+		//cells.push_back(cell{get<1>(counter[i]), get<0>(counter[i])});
+	
+	}
+		//cells.push_back(cell(get<1>(counter[i]), get<0>(counter[i])));
+	
 	for (int i = 0; i < size; i++)
-		cells.push_back(cell(counter[i][1], counter[i][0], NULL, NULL));
-
+		cout << cells[i].value << endl;
 	/*
 	std::ofstream outfile;
 	outfile.open(p2, std::ios_base::trunc);//std::ios_base::app
 	outfile << data; 
 	*/
 	return 0;
-}
+}￼Enter
