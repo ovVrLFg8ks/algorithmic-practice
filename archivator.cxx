@@ -11,8 +11,6 @@
 
 using namespace std;
 
-//map<char, string> codes;
-
 struct cell {
 	long value;
 	char ch;
@@ -26,46 +24,17 @@ struct cell {
 	const bool operator>(const cell& c) const {
 		return value > c.value;
 	}
-	
-	const bool operator==(const cell& c) const {
-#define _CRT_SECURE_NO_WARNINGS
 
-#include <iostream>
-#include <map>
-#include <fstream>
-#include <streambuf>
-#include <vector>
-#include <algorithm>
-#include <cstring>
-#include <set>
-
-using namespace std;
-
-//map<char, string> codes;
-
-struct cell {
-	long value;
-	char ch;
-	cell* p1 = NULL;
-	cell* p2 = NULL;
-	
-	const bool operator<(const cell& c) const {
-		return value < c.value;
-	}
-	
-	const bool operator>(const cell& c) const {
-		return value > c.value;
-	}
-	
 	const bool operator==(const cell& c) const {
 		return value == c.value;
 	}
 };
 
-int main(int argc, char* argv[]) {
-	string path = "/storage/emulated/0/Cxx/archivator";
 
-	//string path = "C:/Users/0001/Desktop/archivator";
+int main(int argc, char* argv[]) {
+	//string path = "/storage/emulated/0/Cxx/archivator";
+
+	string path = "C:/Users/0001/Desktop/archivator";
 	string p = path + ".cxx";
 	string d = path + ".que";
 	string q = path + "0.cxx";
@@ -111,10 +80,10 @@ int main(int argc, char* argv[]) {
 	}*/
 
 	int size = counter.size();
-	
-	set<cell> cells;
+
+	multiset<cell> cells;
 	for (int i = 0; i < size; i++) {
-		cell t{get<0>(counter[i]), get<1>(counter[i])};
+		cell t{ get<0>(counter[i]), get<1>(counter[i]) };
 		cells.insert(t);
 	}
 	/*
@@ -123,14 +92,13 @@ int main(int argc, char* argv[]) {
 	*/
 	for (; size > 1; size--) {
 		cell c1, c2;
-		c1 = *cells.rbegin();
-		cells.erase(prev(cells.end()));
-		c2 = *cells.rbegin();
-		cells.erase(prev(cells.end()));
+		c1 = *cells.begin();
+		cells.erase(cells.begin());
+		c2 = *cells.begin();
+		cells.erase(cells.begin());
 		cell c3{ c1.value + c2.value, 0, &c1, &c2 };
 		cells.insert(c3);
 	}
-
 
 	/*
 	std::ofstream outfile;
@@ -138,4 +106,4 @@ int main(int argc, char* argv[]) {
 	outfile << data;
 	*/
 	return 0;
-}￼Enter
+}
