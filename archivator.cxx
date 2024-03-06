@@ -18,54 +18,54 @@ struct cell {
 	char ch;
 	cell* p1 = NULL;
 	cell* p2 = NULL;
+	
+	const bool operator<(const cell& c) const {
+		return value < c.value;
+	}
+	
+	const bool operator>(const cell& c) const {
+		return value > c.value;
+	}
+	
+	const bool operator==(const cell& c) const {
+#define _CRT_SECURE_NO_WARNINGS
 
-	//cell(char c, long val, cell* left, cell* right) : ch(c), value(val), p1(left), p2(right) {}
-	//cell(char c, long val) : ch(c), value(val) {}
-
-};
-/*
-class Tree {
-private:
-	int size = 0;
 #include <iostream>
 #include <map>
 #include <fstream>
 #include <streambuf>
 #include <vector>
+#include <algorithm>
+#include <cstring>
+#include <set>
 
 using namespace std;
 
 //map<char, string> codes;
 
 struct cell {
-	char ch;
 	long value;
+	char ch;
 	cell* p1 = NULL;
 	cell* p2 = NULL;
-
-	//cell(char c, long val, cell* left, cell* right) : ch(c), value(val), p1(left), p2(right) {}
-	//cell(char c, long val) : ch(c), value(val) {}
-
-};
-/*
-class Tree {
-private:
-	int size = 0;
-	cell root;
-public:
-	Tree() {
-
-	};
-
-	void addToTree(cell c) {
-
+	
+	const bool operator<(const cell& c) const {
+		return value < c.value;
+	}
+	
+	const bool operator>(const cell& c) const {
+		return value > c.value;
+	}
+	
+	const bool operator==(const cell& c) const {
+		return value == c.value;
 	}
 };
-*/
-int main(int argc, char* argv[]) {
-	//string path = "/storage/emulated/0/Cxx/archivator";
 
-	string path = "C:/Users/0001/Desktop/archivator";
+int main(int argc, char* argv[]) {
+	string path = "/storage/emulated/0/Cxx/archivator";
+
+	//string path = "C:/Users/0001/Desktop/archivator";
 	string p = path + ".cxx";
 	string d = path + ".que";
 	string q = path + "0.cxx";
@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
 	}*/
 
 	int size = counter.size();
-
+	
 	set<cell> cells;
 	for (int i = 0; i < size; i++) {
 		cell t{get<0>(counter[i]), get<1>(counter[i])};
@@ -138,4 +138,4 @@ int main(int argc, char* argv[]) {
 	outfile << data;
 	*/
 	return 0;
-}
+}￼Enter
