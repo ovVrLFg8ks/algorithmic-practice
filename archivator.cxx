@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cstring>
 #include <set>
+#include <bitset>
 
 using namespace std;
 
@@ -30,11 +31,30 @@ struct cell {
 	}
 };
 
+struct cellHandler {
+	cell* val;
+	
+	const bool operator<(const cellHandler& c) const {
+		return val->value < c.val->value;
+	}
+};
+
+string darr[256];
+
+void destroyTree(cell* root, string str) {
+	if (root->p1 == NULL && root->p2 != NULL)
+		darr[(unsigned char)root->ch] = str;
+	if (root->p1 != NULL)
+		destroyTree(root->p1, str + '0');
+	if (root->p2 != NULL)
+		destroyTree(root->p2, str + '1');
+	delete[] root; 
+};
 
 int main(int argc, char* argv[]) {
-	//string path = "/storage/emulated/0/Cxx/archivator";
+	string path = "/storage/emulated/0/Cxx/archivator";
 
-	string path = "C:/Users/0001/Desktop/archivator";
+	//string path = "C:/Users/0001/Desktop/archivator";
 	string p = path + ".cxx";
 	string d = path + ".que";
 	string q = path + "0.cxx";
@@ -81,29 +101,37 @@ int main(int argc, char* argv[]) {
 
 	int size = counter.size();
 
-	multiset<cell> cells;
+	multiset<cellHandler> cellsH;
 	for (int i = 0; i < size; i++) {
-		cell t{ get<0>(counter[i]), get<1>(counter[i]) };
-		cells.insert(t);
+		cell* t = new cell{ get<0>(counter[i]), get<1>(counter[i]) };
+		cellHandler th = cellHandler{t};
+		cellsH.insert(th);
 	}
 	/*
 	for (int i = 0; i < size; i++)
 		cout << cells[i].value << endl;
 	*/
 	for (; size > 1; size--) {
-		cell c1, c2;
-		c1 = *cells.begin();
-		cells.erase(cells.begin());
-		c2 = *cells.begin();
-		cells.erase(cells.begin());
-		cell c3{ c1.value + c2.value, 0, &c1, &c2 };
-		cells.insert(c3);
+		cellHandler c1, c2;
+		c1 = *cellsH.begin();
+		cellsH.erase(cellsH.begin());
+		c2 = *cellsH.begin();
+		cellsH.erase(cellsH.begin());
+		cell* c = new cell{ c1.val->value + c2.val->value, 0, (c1.val), (c2.val) };
+		cellHandler c3{ c };
+		cellsH.insert(c3);
 	}
-
+	
+	destroyTree((*cellsH.begin()).val, "");
+	
 	/*
 	std::ofstream outfile;
-	outfile.open(p2, std::ios_base::trunc);//std::ios_base::app
-	outfile << data;
+	outfile.open(p2, std::ios_base::trunc);
+	for (int i = 0; i < 256; i++) {
+		if (darr != "") {
+			outfile << darr.length() << bits << i;
+		}
 	*/
+	
 	return 0;
 }
