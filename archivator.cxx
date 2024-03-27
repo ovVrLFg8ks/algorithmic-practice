@@ -15,7 +15,7 @@ using namespace std;
 #define byte unsigned char
 
 struct cell {
-	long value;
+	int32_t value;
 	char ch;
 	cell* p1 = NULL;
 	cell* p2 = NULL;
@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
 	string path = "C:/Users/0001/Desktop/6";
 	string p = path + ".txt";
 	string d = path + ".que";
-	string q = path + "0.cxx";
+	string q = path + ".tup";
 
 	char* p1 = new char[p.length() + 1];
 	strcpy(p1, p.c_str());
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
 	{	// packing
 		FILE* f = fopen(p1, "rb");
 		fseek(f, 0, SEEK_END);
-		long fsize = ftell(f);
+		int32_t fsize = ftell(f);
 		fseek(f, 0, SEEK_SET);
 
 		char* data = (char*)malloc(fsize + 1);
@@ -224,7 +224,18 @@ int main(int argc, char* argv[]) {
 	}
 
 	{ // unpacking
+		FILE* f = fopen(p2, "rb");
+		fseek(f, 0, SEEK_END);
+		int32_t fsize = ftell(f);
+		fseek(f, 0, SEEK_SET);
 
+		char* data = (char*)malloc(fsize + 1);
+		fread(data, fsize, 1, f);
+		fclose(f);
+
+		int32_t char_quantity, char_counter = 0;
+		memcpy(&char_quantity, data, 4);
+		int i = 4;
 	}
 	return 0;
 }
