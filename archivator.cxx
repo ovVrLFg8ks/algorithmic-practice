@@ -62,10 +62,18 @@ void destroyTree(cell* root, string str) {
 	delete[] root;
 };
 
+void destroyLastTree(cell* root) {
+	if (root->p1 != NULL)
+		destroyLastTree(root->p1);
+	if (root->p2 != NULL)
+		destroyLastTree(root->p2);
+	delete[] root;
+};
+
 int main(int argc, char* argv[]) {
 	//string path = "/storage/emulated/0/Cxx/archivator";
 	//string path = "C:/Users/0001/Desktop/archivator";
-	string path = "C:/Users/0001/Desktop/6";
+	string path = "C:/Users/0001/Desktop/a";
 	string p = path + ".txt";
 	string d = path + ".que";
 	string q = path + ".tup";
@@ -235,7 +243,83 @@ int main(int argc, char* argv[]) {
 
 		int32_t char_quantity, char_counter = 0;
 		memcpy(&char_quantity, data, 4);
-		int i = 4;
+		int step = 4, bs_offset = 0;
+		cell root;
+		cell* current_cell = &root;
+		int state = 0;
+
+		bitset<8*36> bsout;
+		while (step < fsize) {
+			int bsout_fill = 0;
+			for (int i = 0; i < 36 && i + step < fsize; i++) {
+				bitset<8> bsch = data[i+step];
+				for (int a = 0; a < 8; a++)
+					bsout[a + bsout_fill] = bsch[a];
+				bsout_fill += 8;
+			}
+			bitset<8> bs_len;
+			for (int i = 0; i < 8; i++)
+				bs_len[i] = bsout[i + bs_offset];
+			unsigned long t = bs_len.to_ulong();
+			byte length = static_cast<unsigned char>(t);
+			if (length == 0) {
+				step += 1;
+				break;
+			}
+
+			current_cell = &root;
+			for (int i = 0; i < length; i++) {
+				bool route = bsout[8 + bs_offset + i];
+				if (route) {
+					if (current_cell->p2 == NULL) {
+						cell* t = new cell{0, 0, NULL, NULL};
+						current_cell->p2 = t;
+					}
+					current_cell = current_cell->p2;
+				}
+				else {
+					if (current_cell->p1 == NULL) {
+						cell* t = new cell{ 0, 0, NULL, NULL };
+						current_cell->p1 = t;
+					}
+					current_cell = current_cell->p1;
+				}
+			}
+			bitset<8> bs_ch;
+			for (int i = 0; i < 8; i++)
+				bs_ch[i] = bsout[bs_offset + 8 + length + i];
+			t = bs_ch.to_ulong();
+			char ch = static_cast<unsigned char>(t);
+			current_cell->ch = ch;
+
+			step += 2 + (bs_offset + length) / 8;
+			bs_offset = (bs_offset + length) % 8;
+		}
+
+		current_cell = &root;
+		ofstream outFile;
+		outFile.open(p3, ios::out | ios::trunc);
+		
+		while (true) {
+			bitset<8> bsch = data[step++];
+			for (int i = bs_offset; i < 8; i++) {
+				bool path = bsch[i];
+				if (path)
+					current_cell = current_cell->p2;
+				else
+					current_cell = current_cell->p1;
+				if (current_cell->p1 == NULL && current_cell->p2 == NULL) {
+					outFile.put(current_cell->ch);
+					current_cell = &root;
+					if (++char_counter == char_quantity)
+						goto CLOSE_FILE;
+				}
+			}
+			bs_offset = 0;
+		}
+		CLOSE_FILE:
+		outFile.close();
+		//destroyLastTree(&root);
 	}
 	return 0;
 }
