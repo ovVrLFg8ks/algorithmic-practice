@@ -61,8 +61,10 @@ public:
     }
 
     void print() {
-        print(root);
-        std::cout << std::endl;
+        if (_size) {
+            print(root);
+            std::cout << std::endl;
+        }
     }
 
     bool contains(const T value) {
@@ -90,6 +92,7 @@ public:
     void clear() {
         deleteCells(root);
         root = new cell{};
+        _size = 0;
     }
 
     ~set() {
@@ -111,18 +114,18 @@ private:
             delete current_cell;
             return;
         }
+        if (!(nodeState % 15)) { // both chld
+            cell* c = current_cell->dR; // not C28182 due to nodeState states that cell have children
+            while (c->dL != NULL)
+                c = c->dL;
+            current_cell->value = c->value;
+            _size++;
+            current_cell = c;
+            erase();
+            return;
+        }
         if (!(nodeState % 7)) { // if have parent
             cell* parent = current_cell->up;
-            if (!(nodeState % 15)) { // both chld
-                cell* c = current_cell->dR; // not C28182 due to nodeState states that cell have children
-                while (c->dL != NULL)
-                    c = c->dL;
-                current_cell->value = c->value;
-                _size++;
-                current_cell = c;
-                erase();
-                return;
-            }
             if (!(nodeState % 3)) { // left chld
                 current_cell->dL->up = current_cell->up;
                 if (parent->dL == current_cell)
@@ -151,16 +154,6 @@ private:
             }
         }
         else { // if no parent
-            if (!(nodeState % 15)) { // both chld
-                cell* c = current_cell->dR; // not C28182 due to nodeState states that cell have children
-                while (c->dL != NULL)
-                    c = c->dL;
-                current_cell->value = c->value;
-                _size++;
-                current_cell = c;
-                erase();
-                return;
-            }
             if (!(nodeState % 3)) { // left chld
                 root = current_cell->dL;
                 delete current_cell;
@@ -226,13 +219,122 @@ int main() {
     a.insert(14);
     a.insert(16);
     a.insert(18);
+    /*
+                10
+              /    \
+             /      \
+            /        \
+           5           15
+         /  \         /   \
+        /    \       /     \
+       3      7     13     17
+      / \    / \   /  \   /  \
+     2   4  6   9 12  14 16  18
+
+    */
 
     a.print();
-    cout << a.size() << endl << endl;
+    cout << "size:" + a.size() << endl << endl;
 
-    a.erase(10);
+    a.erase(10);  // deleting root
     a.print();
-    cout << a.size() << endl;
+    cout << "size: " << a.size() << endl << endl;
+    /*
+                12
+              /    \
+             /      \
+            /        \
+           5           15
+         /  \         /   \
+        /    \       /     \
+       3      7     13     17
+      / \    / \     \    /  \
+     2   4  6   9    14  16  18
+
+    */
+
+    a.erase(16);  // deleting leaf
+    a.print();
+    cout << "size: " << a.size() << endl << endl;
+    /*
+                12
+              /    \
+             /      \
+            /        \
+           5           15
+         /  \         /   \
+        /    \       /     \
+       3      7     13     17
+      / \    / \     \      \
+     2   4  6   9    14     18
+
+    */
+
+    a.erase(7);  // deleting node with two children 
+    a.print();
+    cout << "size: " << a.size() << endl << endl;
+    /*
+                12
+              /    \
+             /      \
+            /        \
+           5           15
+         /  \         /   \
+        /    \       /     \
+       3      9     13     17
+      / \    /       \      \
+     2   4  6        14     18
+
+    */
+
+    a.erase(13);  // deleting node with one children 
+    a.print();
+    cout << "size: " << a.size() << endl << endl;
+    /*
+                12
+              /    \
+             /      \
+            /        \
+           5           15
+         /  \         /   \
+        /    \       /     \
+       3      9     14     17
+      / \    /              \
+     2   4  6               18
+
+    */
+
+    a.insert(19);
+    a.print();
+    cout << "size: " << a.size() << endl << endl;
+    /*
+                12
+              /    \
+             /      \
+            /        \
+           5           15
+         /  \         /   \
+        /    \       /     \
+       3      9     14     17
+      / \    /               \
+     2   4  6                18
+                               \
+                               19
+    */
+
+    cout << "does set contain 3?" << endl;
+    cout << (a.contains(3) ? "yes" : "no") << endl;
+    cout << "does set contain 1?" << endl;
+    cout << (a.contains(1) ? "yes" : "no") << endl << endl;
+
+    a.clear(); cout << "Cleared!" << endl;
+    a.print();
+    cout << "size: " << a.size() << endl << endl;
+
+    for (int i = 5; i > 0; i--)
+        a.insert(i);
+    a.print();
+
 
     return 0;
 }
