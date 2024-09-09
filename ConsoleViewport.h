@@ -14,8 +14,8 @@ private:
 #define CHARTYPE wchar_t
     CHARTYPE* screen;
 #else
-#define CHARS char
-    CHARS* screen;
+#define CHARTYPE char
+    CHARTYPE* screen;
 #endif
 
 public:
@@ -79,5 +79,5 @@ public:
     }
 
 #undef WIDECHAR
-#undef CHARS
+#undef CHARTYPE
 };
