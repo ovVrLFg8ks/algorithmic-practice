@@ -3,9 +3,9 @@
 #include <stdexcept>
 
 #ifdef _WIN32
-	#include <Windows.h>
+#include <Windows.h>
 #elif __linux__
-	#include <sys/ioctl.h>
+#include <sys/ioctl.h>
 #endif
 
 
@@ -28,19 +28,18 @@ private:
 #endif
     CHARTYPE* screen;
 
-public:
-    ConsoleViewport() {
+    void inline Init() {
 #ifdef _WIN32
         hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
         GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-        width = csbi.srWindow.Right - csbi.srWindow.Left;
-        height = csbi.srWindow.Bottom - csbi.srWindow.Top;
+        width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+        height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 #elif __linux__
         struct winsize w;
         ioctl(fileno(stdout), TIOCGWINSZ, &w);
         width = (int)(w.ws_col);
         height = (int)(w.ws_row);
-#endif // Windows/Linux
+#endif
 
         widthP1 = width + 1;
         screenSize = widthP1 * height;
@@ -49,10 +48,20 @@ public:
             screen[width + widthP1 * i] = '\n';
         }
         screen[screenSize - 1] = '\0';
+
+        CONSOLE_CURSOR_INFO     cursorInfo;
+        GetConsoleCursorInfo(hStdOut, &cursorInfo);
+        cursorInfo.bVisible = false;
+        SetConsoleCursorInfo(hStdOut, &cursorInfo);
+    }
+
+public:
+    ConsoleViewport() {
+        Init();
     }
 
     ~ConsoleViewport() {
-        delete[] screen;
+        free(screen);
     }
 
     void inline SafeScreen(int& x, int& y, CHARTYPE ch) {
@@ -84,7 +93,7 @@ public:
         SetConsoleCursorPosition(hStdOut, { 0, 0 });
         WriteConsole(hStdOut, screen, screenSize, NULL, NULL);
 #elif __linux__
-        printf("%c[0;0f",0x1B);
+        printf("%c[0;0f", 0x1B);
         printf("%ls", screen);
 #endif
     }
@@ -95,6 +104,11 @@ public:
 
     int inline GetHeight() noexcept {
         return height;
+    }
+
+    void Reset() {
+        delete[] screen;
+        Init();
     }
 
 #undef WIDECHAR
