@@ -31,7 +31,7 @@ private:
     void inline Init() {
 #ifdef _WIN32
         hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+        GetConsoleScreenBufferInfo(hStdOut, &csbi);
         width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
         height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 #elif __linux__
@@ -61,7 +61,7 @@ public:
     }
 
     ~ConsoleViewport() {
-        free(screen);
+        delete[] screen;
     }
 
     void inline SafeScreen(int& x, int& y, CHARTYPE ch) {
